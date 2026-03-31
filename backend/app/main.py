@@ -1,4 +1,3 @@
-from fastapi.middleware.cors import CORSMiddleware
 from __future__ import annotations
 
 import os
