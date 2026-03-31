@@ -1,0 +1,25 @@
+Q1 Business Performance Summary
+--------------------------------
+
+This report summarizes the key outcomes from the first quarter of the year.
+We focus on revenue performance, customer adoption, operational efficiency,
+and the actions taken to improve service quality.
+
+Highlights
+- Revenue grew year over year driven by new customer onboarding.
+- Retention improved after the rollout of updated onboarding materials.
+- Operational costs remained stable despite expanded delivery commitments.
+
+Key Metrics
+1. Total revenue: steady upward trend across the quarter.
+2. Active accounts: increased consistently month over month.
+3. Support tickets: decreased following knowledge base improvements.
+
+Next Steps
+- Expand pilot programs to additional regions.
+- Continue investing in onboarding automation and documentation.
+- Monitor churn drivers and refine segmentation for targeted outreach.
+
+Prepared by: DocFlow Analytics Team
+Date: 2026-03-31
+

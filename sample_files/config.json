@@ -1,0 +1,27 @@
+{
+  "workflow": {
+    "retryPolicy": {
+      "maxAttempts": 3,
+      "backoffSeconds": 2,
+      "exponential": true
+    },
+    "progress": {
+      "heartbeatSeconds": 15,
+      "channels": {
+        "jobProgress": "job_progress:{job_id}"
+      }
+    }
+  },
+  "exports": {
+    "formats": ["json", "csv"],
+    "csv": {
+      "delimiter": ";",
+      "includeEffectiveEdits": true
+    }
+  },
+  "storage": {
+    "type": "local_filesystem",
+    "uploadDir": "./uploads"
+  }
+}
+
