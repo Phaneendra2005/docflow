@@ -4,13 +4,13 @@ import json
 from datetime import datetime, timezone
 from typing import Any
 
-import redis
-import redis.asyncio as redis_asyncio
+# import redis
+#import redis.asyncio as redis_asyncio
 
 from app.config import settings
 
 
-_publish_client = redis.Redis.from_url(settings.REDIS_URL, decode_responses=True)
+#_publish_client = redis.Redis.from_url(settings.REDIS_URL, decode_responses=True)
 
 
 def publish_progress(
@@ -58,7 +58,7 @@ async def subscribe_to_job(job_id: str):
     and return a redis-py pubsub subscription.
     """
     channel = f"job_progress:{job_id}"
-    client = redis_asyncio.from_url(settings.REDIS_URL, decode_responses=True)
+   # client = redis_asyncio.from_url(settings.REDIS_URL, decode_responses=True)
     pubsub = client.pubsub(ignore_subscribe_messages=True)
     await pubsub.subscribe(channel)
     return pubsub
