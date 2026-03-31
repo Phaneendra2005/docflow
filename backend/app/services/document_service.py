@@ -14,8 +14,9 @@ from sqlalchemy.orm import selectinload
 
 from app.config import settings
 from app.models.document import DocumentJob, ProcessedResult, JobStatus
-from app.worker.celery_app import celery_app
 
+
+from app.worker.tasks import process_document
 
 def _safe_filename(name: str) -> str:
     name = name.strip().replace(" ", "_")
@@ -62,10 +63,8 @@ async def create_job(db: AsyncSession, file: UploadFile, filename: str) -> Docum
     await db.refresh(job)
 
     # Enqueue Celery task.
-    async_result = celery_app.send_task(
-        "app.worker.tasks.process_document",
-        args=[str(job_id)],
-    )
+
+    process_document(job_id)
     job.celery_task_id = str(async_result.id)
     await db.commit()
     await db.refresh(job)
@@ -172,10 +171,8 @@ async def retry_job(db: AsyncSession, job_id: uuid.UUID) -> DocumentJob:
     await db.commit()
     await db.refresh(job)
 
-    async_result = celery_app.send_task(
-        "app.worker.tasks.process_document",
-        args=[str(job_id)],
-    )
+    process_document(job_id)
+
     job.celery_task_id = str(async_result.id)
     await db.commit()
     await db.refresh(job)

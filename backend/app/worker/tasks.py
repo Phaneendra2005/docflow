@@ -67,8 +67,7 @@ def _mock_summary(category: str, title: str) -> str:
     )
 
 
-@celery_app.task(name="app.worker.tasks.process_document", bind=True, max_retries=3)
-def process_document(self: Task, job_id: str) -> None:
+def process_document(job_id: str):
     """
     Main Celery task for document processing.
 
