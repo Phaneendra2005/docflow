@@ -14,4 +14,4 @@ aiofiles
 httpx
 pytest
 pytest-asyncio
-
+aiosqlite
