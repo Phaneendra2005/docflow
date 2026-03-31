@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     DATABASE_URL: str = Field(..., description="SQLAlchemy async database URL")
-    REDIS_URL: str | None = None
+    # REDIS_URL: str | None = None
 
     UPLOAD_DIR: str = Field(default="./uploads")
     MAX_FILE_SIZE: int = Field(default=10 * 1024 * 1024, description="Max upload size in bytes")

@@ -5,7 +5,7 @@ alembic
 asyncpg
 psycopg2-binary
 celery
-redis
+#redis
 python-multipart
 python-dotenv
 pydantic
