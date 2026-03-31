@@ -6,8 +6,8 @@ from app.config import settings
 
 
 def make_celery_app() -> Celery:
-    broker_url = settings.CELERY_BROKER_URL or settings.REDIS_URL
-    result_backend = settings.CELERY_RESULT_BACKEND or settings.REDIS_URL
+   # broker_url = settings.CELERY_BROKER_URL or settings.REDIS_URL
+   # result_backend = settings.CELERY_RESULT_BACKEND or settings.REDIS_URL
 
     celery_app = Celery(
         "docflow",
