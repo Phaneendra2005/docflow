@@ -7,7 +7,6 @@ import time
 import uuid
 from datetime import datetime, timezone
 
-from celery import Task
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -15,7 +14,7 @@ from app.config import settings
 from app.core.pubsub import publish_progress
 from app.models.document import DocumentJob, ProcessedResult, JobStatus
 
-from .celery_app import celery_app
+
 
 
 def _get_sync_engine():
