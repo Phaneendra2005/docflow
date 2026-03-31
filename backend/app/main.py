@@ -1,3 +1,4 @@
+from fastapi.middleware.cors import CORSMiddleware
 from __future__ import annotations
 
 import os
@@ -20,7 +21,7 @@ allowed_origins = _parse_origins(settings.ALLOWED_ORIGINS)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins or ["*"],
+    allow_origins=["*"],  # allow all for now
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
