@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, Boolean, Enum as SAEnum, func
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy import JSON, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..database import Base
@@ -55,21 +55,21 @@ class DocumentJob(Base):
 class ProcessedResult(Base):
     __tablename__ = "processed_results"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     job_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("document_jobs.id", ondelete="CASCADE"), unique=True)
 
     title: Mapped[str] = mapped_column(String, nullable=False, default="")
     category: Mapped[str] = mapped_column(String, nullable=False, default="")
     summary: Mapped[str] = mapped_column(Text, nullable=False, default="")
-    keywords: Mapped[list[str]] = mapped_column(JSONB, nullable=False, default=list)
-    extracted_metadata: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    keywords: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    extracted_metadata: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
     raw_text: Mapped[str] = mapped_column(Text, nullable=False, default="")
 
     is_finalized: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     finalized_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     # Stores user-edited fields (title/category/summary/keywords/etc).
-    user_edits: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    user_edits: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
