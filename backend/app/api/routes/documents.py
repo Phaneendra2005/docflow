@@ -136,7 +136,11 @@ async def list_documents(
 # -------------------------------
 @router.get("/{id}")
 async def get_document(id: str, db: AsyncSession = Depends(get_db)):
+    import traceback
+
     try:
+        print("➡️ Fetching document:", id)
+
         result = await db.execute(
             select(DocumentJob)
             .where(DocumentJob.id == id)
@@ -144,10 +148,13 @@ async def get_document(id: str, db: AsyncSession = Depends(get_db)):
         )
         job = result.scalar_one_or_none()
 
+        print("➡️ Job:", job)
+
         if not job:
             raise HTTPException(status_code=404, detail="Not found")
 
-        # 🔥 FORCE SIMPLE SAFE RESPONSE
+        print("➡️ Result:", job.result)
+
         return {
             "id": str(job.id),
             "filename": job.filename,
@@ -159,10 +166,9 @@ async def get_document(id: str, db: AsyncSession = Depends(get_db)):
         }
 
     except Exception as e:
-        import traceback
-        print("🔥🔥🔥 ERROR START 🔥🔥🔥")
+        print("\n🔥🔥🔥 ERROR START 🔥🔥🔥")
         traceback.print_exc()
-        print("🔥🔥🔥 ERROR END 🔥🔥🔥")
+        print("🔥🔥🔥 ERROR END 🔥🔥🔥\n")
         raise HTTPException(status_code=500, detail=str(e))
 
 
