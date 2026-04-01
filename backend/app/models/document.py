@@ -21,7 +21,11 @@ class JobStatus(str, enum.Enum):
 class DocumentJob(Base):
     __tablename__ = "document_jobs"
 
-    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id: Mapped[str] = mapped_column(
+        String,
+        primary_key=True,
+        default=lambda: str(uuid.uuid4())
+    )
     filename: Mapped[str] = mapped_column(String, nullable=False)
     original_filename: Mapped[str] = mapped_column(String, nullable=False)
     file_path: Mapped[str] = mapped_column(String, nullable=False)
@@ -56,7 +60,11 @@ class ProcessedResult(Base):
     __tablename__ = "processed_results"
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    job_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("document_jobs.id", ondelete="CASCADE"), unique=True)
+    job_id: Mapped[str] = mapped_column(
+        String,
+        ForeignKey("document_jobs.id", ondelete="CASCADE"),
+        unique=True
+    )
 
     title: Mapped[str] = mapped_column(String, nullable=False, default="")
     category: Mapped[str] = mapped_column(String, nullable=False, default="")
@@ -76,7 +84,7 @@ class ProcessedResult(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
-        nullable=False,
+        nullable=False, 
     )
 
     job: Mapped[DocumentJob] = relationship("DocumentJob", back_populates="result")
