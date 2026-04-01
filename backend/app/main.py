@@ -12,6 +12,8 @@ from app.config import settings
 from app.db.base import Base
 from app.db.session import engine
 
+import app.models 
+
 def _parse_origins(raw: str) -> list[str]:
     return [o.strip() for o in raw.split(",") if o.strip()]
 
