@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { DocumentJob, ExportFormat, ListResponse, ProcessedResult } from "../types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? process.env.NEXT_PUBLIC_API_URL!;;
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -53,7 +53,7 @@ export async function finalizeResult(id: string): Promise<DocumentJob> {
 }
 
 export const exportDocument = async (id: string, format: "json" | "csv") => {
-  const res = await fetch(`http://localhost:8000/api/documents/${id}/export/${format}`, {
+  const res = await fetch(`${API_BASE_URL}/api/documents/${id}/export/${format}`, {
     method: "GET",
   });
 

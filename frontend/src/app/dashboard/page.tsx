@@ -6,6 +6,8 @@ import { useDocumentList, useDocumentMutations } from "../../hooks/useDocuments"
 import SearchAndFilter from "../../components/SearchAndFilter";
 import JobCard from "../../components/JobCard";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function DashboardPage() {
   const pageSize = 10;
   const [page, setPage] = useState(0);
@@ -65,9 +67,13 @@ export default function DashboardPage() {
 
   const onDelete = async (id: string) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/documents/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/documents/${id}`, {
         method: "DELETE",
       });
+
+      if (!API_BASE_URL) {
+        throw new Error("API URL not defined");
+      }
 
       if (!res.ok) {
         const errorText = await res.text();

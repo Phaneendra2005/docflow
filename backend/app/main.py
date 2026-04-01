@@ -9,6 +9,8 @@ from app.api.routes.documents import router as documents_router
 from app.api.routes.jobs import router as jobs_router
 from app.config import settings
 
+from app.db.base import Base
+from app.db.session import engine
 
 def _parse_origins(raw: str) -> list[str]:
     return [o.strip() for o in raw.split(",") if o.strip()]
@@ -31,8 +33,8 @@ app.include_router(jobs_router, prefix="/api/jobs", tags=["jobs"])
 
 
 @app.on_event("startup")
-async def on_startup() -> None:
-    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+async def startup():
+    Base.metadata.create_all(bind=engine)
 
 
 @app.get("/health")
