@@ -25,7 +25,7 @@ def _safe_filename(name: str) -> str:
     return name or "document"
 
 
-def _storage_path(job_id: uuid.UUID, safe_filename: str) -> str:
+def _storage_path(job_id: str, safe_filename: str) -> str:
     return os.path.join(settings.UPLOAD_DIR, f"{job_id}_{safe_filename}")
 
 
@@ -35,7 +35,7 @@ async def create_job(db: AsyncSession, file: UploadFile, filename: str) -> Docum
     if file_size > settings.MAX_FILE_SIZE:
         raise ValueError(f"File too large. Max allowed is {settings.MAX_FILE_SIZE} bytes.")
 
-    job_id = uuid.uuid4()
+    job_id = str(uuid.uuid4())
     safe_filename = _safe_filename(filename)
     stored_path = _storage_path(job_id, safe_filename)
 
@@ -65,13 +65,13 @@ async def create_job(db: AsyncSession, file: UploadFile, filename: str) -> Docum
     # Enqueue Celery task.
 
     process_document(job_id)
-    job.celery_task_id = str(async_result.id)
+    
     await db.commit()
     await db.refresh(job)
     return job
 
 
-async def get_job(db: AsyncSession, job_id: uuid.UUID) -> DocumentJob:
+async def get_job(db: AsyncSession, job_id: str) -> DocumentJob:
     stmt: Select[DocumentJob] = (
         select(DocumentJob)
         .where(DocumentJob.id == job_id)
@@ -153,7 +153,7 @@ async def list_jobs(
     return jobs, total, counts
 
 
-async def retry_job(db: AsyncSession, job_id: uuid.UUID) -> DocumentJob:
+async def retry_job(db: AsyncSession, job_id: str) -> DocumentJob:
     job = await get_job(db, job_id)
     if job.status != JobStatus.failed:
         raise ValueError("Only failed jobs can be retried.")
@@ -173,13 +173,13 @@ async def retry_job(db: AsyncSession, job_id: uuid.UUID) -> DocumentJob:
 
     process_document(job_id)
 
-    job.celery_task_id = str(async_result.id)
+    
     await db.commit()
     await db.refresh(job)
     return job
 
 
-async def update_result(db: AsyncSession, job_id: uuid.UUID, updates: dict[str, Any]) -> ProcessedResult:
+async def update_result(db: AsyncSession, job_id: str, updates: dict[str, Any]) -> ProcessedResult:
     job = await get_job(db, job_id)
     if not job.result:
         raise LookupError("Processed result not found.")
@@ -196,7 +196,7 @@ async def update_result(db: AsyncSession, job_id: uuid.UUID, updates: dict[str, 
     return result
 
 
-async def finalize_result(db: AsyncSession, job_id: uuid.UUID) -> ProcessedResult:
+async def finalize_result(db: AsyncSession, job_id: str) -> ProcessedResult:
     job = await get_job(db, job_id)
     if not job.result:
         raise LookupError("Processed result not found.")
@@ -212,7 +212,7 @@ async def finalize_result(db: AsyncSession, job_id: uuid.UUID) -> ProcessedResul
     return result
 
 
-async def delete_job(db: AsyncSession, job_id: uuid.UUID) -> None:
+async def delete_job(db: AsyncSession, job_id: str) -> None:
     job = await get_job(db, job_id)
     # Delete the stored file.
     try:
