@@ -13,6 +13,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from app.database import get_db
 from app.models.document import DocumentJob, ProcessedResult, JobStatus
@@ -136,45 +137,33 @@ async def list_documents(
 @router.get("/{id}")
 async def get_document(id: str, db: AsyncSession = Depends(get_db)):
     try:
-        job_id = uuid.UUID(id)
-
-        # get job
         result = await db.execute(
-            select(DocumentJob).where(DocumentJob.id == job_id)
+            select(DocumentJob)
+            .where(DocumentJob.id == id)
+            .options(selectinload(DocumentJob.result))
         )
         job = result.scalar_one_or_none()
 
         if not job:
-            raise HTTPException(status_code=404, detail="Document not found")
+            raise HTTPException(status_code=404, detail="Not found")
 
-        # 🔥 get processed result
-        result_obj = await db.execute(
-            select(ProcessedResult).where(ProcessedResult.job_id == job_id)
-        )
-        processed = result_obj.scalar_one_or_none()
-
+        # 🔥 FORCE SIMPLE SAFE RESPONSE
         return {
-            "id": job.id,
+            "id": str(job.id),
             "filename": job.filename,
-            "original_filename": job.original_filename,
-            "file_path": job.file_path,
-            "file_size": job.file_size,
-            "file_type": job.file_type,
-            "status": job.status.value if job.status else None,
-            "created_at": job.created_at,
-            "updated_at": job.updated_at,
-            "result": {
-                "title": job.result.title,
-                "category": job.result.category,
-                "summary": job.result.summary,
-                "keywords": job.result.keywords,
-                "is_finalized": job.result.is_finalized,
-            } if job.result else None
+            "status": str(job.status),
+            "created_at": str(job.created_at),
+            "result": None if not job.result else {
+                "title": job.result.title
+            }
         }
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid job id")
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+
+    except Exception as e:
+        import traceback
+        print("🔥🔥🔥 ERROR START 🔥🔥🔥")
+        traceback.print_exc()
+        print("🔥🔥🔥 ERROR END 🔥🔥🔥")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # -------------------------------
