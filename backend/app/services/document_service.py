@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import re
 import uuid
+import asyncio
 from datetime import datetime, timezone
 from typing import Any, Iterable
 
@@ -64,7 +65,7 @@ async def create_job(db: AsyncSession, file: UploadFile, filename: str) -> Docum
 
     # Enqueue Celery task.
 
-    process_document(job_id)
+    asyncio.create_task(process_document(job_id))
     
     await db.commit()
     await db.refresh(job)
@@ -171,7 +172,7 @@ async def retry_job(db: AsyncSession, job_id: str) -> DocumentJob:
     await db.commit()
     await db.refresh(job)
 
-    process_document(job_id)
+    asyncio.create_task(process_document(job_id))
 
     
     await db.commit()

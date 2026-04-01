@@ -66,7 +66,7 @@ def _mock_summary(category: str, title: str) -> str:
     )
 
 
-def process_document(job_id: str):
+async def process_document(job_id: str):
     """
     Main Celery task for document processing.
 
