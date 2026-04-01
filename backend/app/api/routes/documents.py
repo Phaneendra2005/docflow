@@ -160,15 +160,17 @@ async def get_document(id: str, db: AsyncSession = Depends(get_db)):
             "file_path": job.file_path,
             "file_size": job.file_size,
             "file_type": job.file_type,
-            "status": job.status,
-            "celery_task_id": job.celery_task_id,
-            "error_message": job.error_message,
-            "retry_count": job.retry_count,
+            "status": job.status.value if job.status else None,
             "created_at": job.created_at,
             "updated_at": job.updated_at,
-            "result": processed,  # 🔥 REQUIRED FOR UI
+            "result": {
+                "title": job.result.title,
+                "category": job.result.category,
+                "summary": job.result.summary,
+                "keywords": job.result.keywords,
+                "is_finalized": job.result.is_finalized,
+            } if job.result else None
         }
-
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid job id")
     except Exception as exc:
