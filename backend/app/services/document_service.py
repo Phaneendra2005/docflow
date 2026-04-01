@@ -73,10 +73,10 @@ async def create_job(db: AsyncSession, file: UploadFile, filename: str) -> Docum
 
 
 async def get_job(db: AsyncSession, job_id: str) -> DocumentJob:
-    stmt: Select[DocumentJob] = (
+    stmt = (
         select(DocumentJob)
         .where(DocumentJob.id == job_id)
-        .options(selectinload(DocumentJob.result))
+        .options(selectinload(DocumentJob.result))  # 🔥 ADD THIS
     )
     res = await db.execute(stmt)
     job = res.scalar_one_or_none()
