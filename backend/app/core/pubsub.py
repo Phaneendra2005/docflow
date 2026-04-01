@@ -49,7 +49,7 @@ def publish_progress(
         }
     )
 
-    _publish_client.publish(channel, json.dumps(payload))
+ 
 
 
 async def subscribe_to_job(job_id: str):
